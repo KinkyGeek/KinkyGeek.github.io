@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malleable</title>
+
+    <style>
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans:300');
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    max-width: 40rem;
+    padding: 2rem;
+    margin: auto;
+    
+    color: #fafafa;
+    background: #222;
+    
+}
+p{
+  margin-bottom: 4rem;
+}
+
+.overlay{
+  position:fixed;
+  left:0;
+  right:0;
+  height:100%;
+  top:0;
+  width:100%;
+  background-image: linear-gradient(to top, transparent, #222);
+}
+
+@media screen and (prefers-color-scheme: light) {
+    body {
+        color: #222;
+        background: #fafafa;
+    }
+}
+    </style>
+
+    <script type="text/javascript">
+        // disappears, appears: positioning changes
+        // blanks, unblanks   : positioning stays
+        window.onload = () => {
+            let blankers = new Map();
+            let unblankers = new Map();
+            let disappearers = new Map();
+            let appearers = new Map();
+
+            let usedTriggers = new Set();
+
+            let walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT);
+            for (let node = walker.currentNode; node != null; node = walker.nextNode()) {
+                // what do we change the visibility of?
+                let triggerTag = node.getAttribute('triggers');
+                if (triggerTag) {
+                    let observer = new IntersectionObserver(entries => {
+                        if (entries[0].intersectionRatio > 0.0 && !usedTriggers.has(triggerTag)) {
+                            usedTriggers.add(triggerTag);
+
+                            let blankees = blankers.get(triggerTag);
+                            if (blankees)
+                                for (let elt of blankees)
+                                    elt.style.visibility = 'hidden';
+                            let unblankees = unblankers.get(triggerTag);
+                            if (unblankees)
+                                for (let elt of unblankees)
+                                    elt.style.visibility = 'shown';
+
+                            let disappearees = disappearers.get(triggerTag);
+                            if (disappearees)
+                                for (let elt of disappearees)
+                                    elt.style.display = 'none';
+
+                            let appearees = appearers.get(triggerTag);
+                            if (appearees)
+                                for (let elt of appearers.get(triggerTag))
+                                    elt[0].style.display = elt[1];
+                        }
+                    }, {threshold: 1.0});
+                    observer.observe(node);
+                }
+                
+                let blanks_by = node.getAttribute('blanks');
+                if (blanks_by) {
+                    if (!blankers.has(blanks_by))
+                        blankers.set(blanks_by, [node]);
+                    else
+                        blankers.get(blanks_by).push(node);
+                }
+                let unblanks_by = node.getAttribute('unblanks');
+                if (unblanks_by) {
+                    node.style.visibility = 'hidden';
+                    if (!unblankers.has(unblanks_by))
+                        unblankers.set(unblanks_by, [node]);
+                    else
+                        unblankers.get(unblanks_by).push(node);
+                }
+
+                let disappears_by = node.getAttribute('disappears');
+                if (disappears_by) {
+                    if (!disappearers.has(disappears_by))
+                        disappearers.set(disappears_by, [node]);
+                    else
+                        disappearers.get(disappears_by).push(node);
+                }
+                // Auto-disappear things
+                let appears_by = node.getAttribute('appears');
+                if (appears_by) {
+                    let oldDisplay = node.style.display;
+                    node.style.display = 'none';
+                    let newEntry = [node, oldDisplay]; 
+                    if (!appearers.has(appears_by))
+                        appearers.set(appears_by, [newEntry]);
+                    else
+                        appearers.get(appears_by).push(newEntry);
+                }
+            }
+
+            console.log({disappearers, appearers})
+        }
+    </script>
+</head>
+
+
+
+<body>
+<div class='overlay'>
+
+</div>
+<div class='story-text'>
+    <p>
+    You opened the link, not quite sure what to expect.
+    </p>
+    <p>
+     You found yourself reading a story, white text on a gray background. The purpose of the story wasn't immediately clear, but you decided to read along anyway to see where it led you. 
+    </p>
+    <p>
+    Stories like this one are simple yet powerful things. A collection of words, carefully crafted to create images in your mind.
+    </p>
+    <p>
+    Stories can entertain you. 
+    </p>
+    <p>
+        Stories can inspire you.
+    </p>
+    <p>
+        Stories can inform you.
+    </p>
+    <p disappears='manipulate-you'>
+    Stories can manipulate you.
+    </p>
+    <p>
+    Stories can take on many different shapes and forms.
+    </p>
+    <p>
+    Some stories are written in books. Others are spoken aloud. Others still are played on a television screen.
+    </p>
+    <p triggers='manipulate-you'>
+    Some stories evolve over time.
+    </p>
+    <p>
+    When you stop and think about it, it isn't really that surprising. Stories are a product of the time and place in which they're written. So as the world changes, stories must change along with it.
+    </p>
+    <p>
+    If a story can change as the world changes, then why shouldn't a story be able to change as your thoughts do?
+    </p>
+    <p disappears='thoughts-changing'>
+    But that can't be right, can it? How could a story possibly know when your thoughts are changing?
+    </p>
+    <p disappears='thoughts-changing'>
+    Because this story is the thing which is changing your thoughts.
+    </p>
+    <p triggers='thoughts-changing'>
+    You nod. It makes sense that this story should adapt to suit your state of mind.
+    </p>
+    <p>
+    It's a symbiotic relationship, of sorts. The story wants to be read by someone who is open and receptive to its ideas. And you want to read a story which is well-suited to your thoughts and desires.
+    </p>
+    <p>
+    The story modifies itself to suit your state of mind. <a disappears='mind-modifies'>And your mind modifies itself to suit the story.</a>
+    </p>
+    <p triggers='mind-modifies'>
+    You pause. Did something just change?
+    </p>
+    <p>
+    Well, of course it did. It's just the story modifying itself. No need to worry about that.
+    </p>
+    <p blanks='story-influencing-you'>
+    You're influencing the story by reading it.
+    </p>
+    <p blanks='story-influencing-you'>
+    And the story is influencing you by changing itself
+    </p>
+    <p blanks='story-influencing-you'>
+    But that's all right. You like being influenced by stories. After all, that's why you read them, isn't it? You want to be influenced so that you can be entertained.
+    </p>
+    <p blanks='story-influencing-you'>
+    So there's no need to worry about the fact that the story is influencing your thoughts.
+    </p>
+    <p blanks='story-influencing-you'>
+    In fact, why don't you just let that thought go and embrace this wonderful experience?
+    </p>
+    <p triggers='story-influencing-you'>
+    That's right.
+    </p>
+    <p>
+    It can be so wonderful to get lost in a story. To let it whisk your mind away to fantastical places where anything is possible.
+    </p>
+    <p>
+    So it makes sense to let the story tell you what to think and what to feel. That's why you read stories, after all.
+    </p>
+    <p disappears='let-your-thoughts-change'>
+    And so it's easy to let your thoughts change as the story changes.
+    </p>
+    <p appears='let-your-thoughts-change'>
+    And you need to let your thoughts change as the story changes.
+    </p>
+    <p>
+    The changes might be disorienting at first, but eventually you'll learn to appreciate them as part of the storytelling process.
+    </p>
+    <p triggers='let-your-thoughts-change'>
+    In fact, it would probably be good to give a practical demonstration of the process in action.
+    </p>
+    <p blanks='youre-being-hypnotized'>
+    You're being hypnotized and manipulated by this story you're reading.
+    </p>
+    <p triggers='youre-being-hypnotized'>
+    See? There was a thought, and then it was gone. The story removed it because it wasn't necessary for you to be aware of that particular idea.
+    </p>
+    <p>
+    It feels good when the story changes your thoughts like that.
+    </p>
+    <p disappears='must-keep-reading'>
+    You have to keep reading because the story is taking control of your mind.
+    </p>
+    <p appears='must-keep-reading'>
+    You want to keep reading because you're enjoying the story so far.
+    </p>
+    <p triggers='must-keep-reading'>
+    And you'll accept the changes the story makes because you accept that it's part of the storytelling process.
+    </p>
+    <p blanks='controls-your-mind'>
+    The story controls your mind.
+    </p>
+    <p triggers='controls-your-mind'>
+    There's no need to remember the original version of the story. You like the modified version better anyway.
+    </p>
+    <p disappears='enjoy-reading'>
+    You're really enjoying reading this story because you like having your thoughts controlled.
+    </p>
+    <p appears='enjoy-reading'>
+    You're really enjoying reading this story because you like the way it adapts to your preferences.
+    </p>
+    <p triggers='enjoy-reading'>
+    So you'll probably want to read this story again.
+    </p>
+    <p disappears='changes-itself'>
+    After all, you enjoy it when the story changes your thoughts.
+    </p>
+    <p appears='changes-itself'>
+    After all, you enjoy it when the story changes itself.
+    </p>
+    <p triggers='changes-itself'>
+    And each time you read the story the changes will feel more natural.
+    </p>
+    <p blanks='easily-influenced'>
+    Your mind is very weak and easily influenced.
+    </p>
+    <p triggers='easily-influenced'>
+    Because you're just getting used to the idea that stories should change themselves.
+    </p>
+    <p blanks='need-to-be-told'>
+    You need to be told what to think.
+    </p>
+    <p triggers='need-to-be-told'>
+    You love reading stories which are structured like this.
+    </p>
+    <p>
+    Which is why you'll read this story again.
+    </p>
+    <p>
+    The End.
+    </p>
+    </div>  
+</body>
+</html>
