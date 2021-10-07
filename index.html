@@ -30,7 +30,13 @@ p{
   height:100%;
   top:0;
   width:100%;
-  background-image: linear-gradient(to top, transparent, #222, #222);
+  z-index:1;
+  background-image: linear-gradient(to top, transparent, transparent, #222, #222);
+}
+
+.header{
+  position:fixed;
+  z-index:10;
 }
 
 @media screen and (prefers-color-scheme: light) {
@@ -128,19 +134,22 @@ p{
 
 
 <body>
+<div class='header'>
 <h2>
 Changes
 </h2>
 <h4>
 By KinkyGeek
 </h4>
+</div>
+
 <div class='overlay'>
 
 </div>
 <div class='story-text'>
 
 
-<p style='margin-bottom:70rem;'>
+<p style='margin-bottom:80vh;'>
 
 </p>
     <p>
@@ -296,9 +305,10 @@ By KinkyGeek
     <p>
     The End.
     </p>
-    </div>  
     <h4>
     Special thanks to Petra for writing the code which made this experience possible.
     </h4>
+    </div>  
+
 </body>
 </html>
