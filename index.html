@@ -30,6 +30,7 @@ p{
   height:100%;
   top:0;
   width:100%;
+  pointer-events:none;
   z-index:1;
   background-image: linear-gradient(to top, transparent, transparent, #222, #222);
 }
@@ -37,6 +38,12 @@ p{
 .header{
   position:fixed;
   z-index:10;
+}
+.story-text{
+  height:70vh;
+  overflow: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 @media screen and (prefers-color-scheme: light) {
